@@ -22,6 +22,10 @@ func main() {
 		return c.File("assets/images/" + url)
 	})
 
+	auth := e.Group("/auth")
+	auth.POST("/signup", handlers.Signup)
+	auth.POST("/sigin", handlers.Login)
+
 	images := e.Group("/images")
 	images.POST("/", handlers.UploadImage)
 	images.GET("/", handlers.GetAllImages)

@@ -47,7 +47,6 @@ func GetImageById(c echo.Context) error {
 }
 
 func UploadImage(c echo.Context) error {
-
 	// Src
 	file, err := c.FormFile("image")
 
