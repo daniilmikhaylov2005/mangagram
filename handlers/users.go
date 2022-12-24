@@ -36,5 +36,34 @@ func Signup(c echo.Context) error {
 }
 
 func Login(c echo.Context) error {
-	return nil
+	var user models.LoginUser
+	if err := c.Bind(&user); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Error{
+			Error: err.Error(),
+		})
+	}
+
+	userFromDb, err := repository.SelectUserByEmail(user.Email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Error{
+			Error: err.Error(),
+		})
+	}
+
+	if err := CheckPasswordHash(userFromDb.Password, user.Password); err != nil {
+		return c.JSON(http.StatusBadRequest, models.Error{
+			Error: err.Error(),
+		})
+	}
+
+	token, err := CreateToken(userFromDb.ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Error{
+			Error: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, models.Token{
+		Token: token,
+	})
 }

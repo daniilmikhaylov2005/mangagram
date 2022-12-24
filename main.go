@@ -24,7 +24,7 @@ func main() {
 
 	auth := e.Group("/auth")
 	auth.POST("/signup", handlers.Signup)
-	auth.POST("/sigin", handlers.Login)
+	auth.POST("/signin", handlers.Login)
 
 	images := e.Group("/images")
 	images.POST("/", handlers.UploadImage)
