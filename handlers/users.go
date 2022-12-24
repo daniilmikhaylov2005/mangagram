@@ -16,14 +16,23 @@ func Signup(c echo.Context) error {
 		})
 	}
 
-	user, err := repository.InsertUser(user)
+	hashedPassword, err := HashPassword(user.Password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, models.Error{
 			Error: err.Error(),
 		})
 	}
 
-	return c.JSON(http.StatusCreated, user)
+	user.Password = hashedPassword
+
+	rUser, err := repository.InsertUser(user)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, models.Error{
+			Error: err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, rUser)
 }
 
 func Login(c echo.Context) error {
