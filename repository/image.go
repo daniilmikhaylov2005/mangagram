@@ -52,12 +52,20 @@ func InsertImage(image models.Image) error {
 	db := getConnection()
 	defer db.Close()
 
-	query := `INSERT INTO images (url, author) VALUES ($1, $2)`
-	_, err := db.Exec(query, image.Url, image.Author)
+	tx, err := db.Begin()
 
 	if err != nil {
 		return err
 	}
 
+	query := `INSERT INTO images (url, author) VALUES ($1, $2)`
+	_, err = tx.Exec(query, image.Url, image.Author)
+
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 	return nil
 }

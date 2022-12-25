@@ -88,6 +88,12 @@ func UploadImage(c echo.Context) error {
 
 	err = repository.InsertImage(image)
 	if err != nil {
+		e := os.Remove(image.Url)
+		if e != nil {
+			return c.JSON(http.StatusInternalServerError, models.Error{
+				Error: e.Error(),
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, models.Error{
 			Error: err.Error(),
 		})
